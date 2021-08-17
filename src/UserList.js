@@ -1,19 +1,28 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { ListofUser} from './ListofUser';
-export const UserList = () => {
+import React, { useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
+import UserCard from "./UserCard";
+const UserList = () => {
     const [users, setUsers] = useState([]);
-    //console.log(users)
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
-        axios.get('https://jsonplaceholder.typicode.com/users')
-       .then((res)=> setUsers(res.data))
-     .catch((err)=>console.log(err));
+        fetch("https://jsonplaceholder.typicode.com/users")
+            .then((response) => response.json())
+            .then((json) => {
+                setUsers(json);
+                setLoading(false);
+            })
+            .catch((err) => console.log(err));
     }, []);
+    if (loading) {
+        return <Spinner animation="border" variant="white" />;
+    }
     return (
-        <div className='d-flex  justify-content-around flex-wrap '>
-          {users.map(user => <ListofUser user={user} key={user.id}/>
-          )}
-         
+        <div className="d-flex justify-content-around flex-wrap">
+            {users.map((user) => (
+                <UserCard user={user} key={user.id} />
+            ))}
         </div>
-    )
-}
+    );
+};
+
+export default UserList;
